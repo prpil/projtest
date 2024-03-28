@@ -1,11 +1,15 @@
 pipeline {
     agent any
-    
     environment {
-        DOCKERHUB_CREDENTIALS = credentials('docker_cred')
+        DOCKERHUB_CREDENTIALS = credentials('docker_c')
     }
-
     stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
         stage('Install Dependencies') {
             steps {
                 sh 'pip install -r requirements.txt'
