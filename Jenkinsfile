@@ -1,15 +1,11 @@
 pipeline {
     agent any
+    
     environment {
-        DOCKERHUB_CREDENTIALS = credentials('docker_c')
+        DOCKERHUB_CREDENTIALS = credentials('docker_cred')
     }
-    stages {
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
 
+    stages {
         stage('Install Dependencies') {
             steps {
                 sh 'pip install -r requirements.txt'
@@ -40,7 +36,7 @@ pipeline {
                         docker tag prajipil/mydock:${env.BUILD_ID} prajipil/mydock:latest
                         docker push prajipil/mydock:latest
                     """
-               }                }
+                }
             }
         }
     }
