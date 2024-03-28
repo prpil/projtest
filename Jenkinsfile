@@ -49,7 +49,7 @@ pipeline {
                 withCredentials([file(credentialsId: 'ec_id', variable: 'EC2_PRIVATE_KEY_FILE')]) {
                     sh """
                         chmod 600 \$EC2_PRIVATE_KEY_FILE
-                        scp -i \$EC2_PRIVATE_KEY_FILE -o StrictHostKeyChecking=no docker-compose.yaml ec2-user@${EC2_INSTANCE_NAME}:/home/ec2-user/
+                        scp -i \$EC2_PRIVATE_KEY_FILE -o StrictHostKeyChecking=no docker-compose.yaml ec2-user@\$EC2_INSTANCE_NAME:/home/ec2-user/
                     """
                 }
             }
@@ -59,8 +59,8 @@ pipeline {
             steps {
                 sshagent(['ec_id']) {
                     sh """
-                        ssh -i \$EC2_PRIVATE_KEY_FILE ec2-user@${EC2_INSTANCE_NAME} 'docker-compose -f /home/ec2-user/docker-compose.yaml up -d'
-                        python3 selenium.py
+                        ssh -i \$EC2_PRIVATE_KEY_FILE ec2-user@\$EC2_INSTANCE_NAME 'docker-compose -f /home/ec2-user/docker-compose.yaml up -d'
+                        python3 selenium_test.py
                     """
                 }
             }
