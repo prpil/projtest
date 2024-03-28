@@ -54,9 +54,10 @@ pipeline {
                     // Use AWS CLI to describe EC2 instances and extract the instance IP address
                     def instanceIp = sh(script: "aws ec2 describe-instances --instance-ids ${instanceId} --query 'Reservations[].Instances[].PublicIpAddress' --output text", returnStdout: true).trim()
                     
-                    // Copy Docker Compose file to EC2 instance
+                    // SSH into the EC2 instance and run Docker commands to pull and run the Docker image
                     sh """
-                        scp -i /path/to/your/private/key.pem -o StrictHostKeyChecking=no docker-compose.yaml ec2-user@${instanceIp}:/home/ec2-user/
+                        ssh -i \$EC2_PRIVATE_KEY_FILE ec2-user@${instanceIp} 'docker pull prajipil/mydock:latest'
+                        ssh -i \$EC2_PRIVATE_KEY_FILE ec2-user@${instanceIp} 'docker run -d -p 80:80 prajipil/mydock:latest'
                     """
                 }
             }
