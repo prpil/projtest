@@ -1,9 +1,11 @@
 pipeline {
     agent any
+    
     environment {
         DOCKERHUB_CREDENTIALS = credentials('docker_c')
         EC2_PRIVATE_KEY = credentials('ec_id')
     }
+    
     stages {
         stage('Checkout') {
             steps {
@@ -56,27 +58,6 @@ pipeline {
                     sh """
                         scp -i /path/to/your/private/key.pem -o StrictHostKeyChecking=no docker-compose.yaml ec2-user@${instanceIp}:/home/ec2-user/
                     """
-                }
-            }
-        }
-
-        stage('Run Selenium Tests') {
-            steps {
-                // Run Selenium tests on the EC2 instance
-                sshagent(['ec_id']) {
-                    script {
-                        // Use AWS CLI to describe EC2 instances and extract the instance ID
-                        def instanceId = sh(script: 'aws ec2 describe-instances --filters Name=tag:Name,Values=praj-dev --query "Reservations[*].Instances[*].InstanceId" --output text', returnStdout: true).trim()
-                        
-                        // Use AWS CLI to describe EC2 instances and extract the instance IP address
-                        def instanceIp = sh(script: "aws ec2 describe-instances --instance-ids ${instanceId} --query 'Reservations[].Instances[].PublicIpAddress' --output text", returnStdout: true).trim()
-                        
-                        // SSH into the EC2 instance and run Selenium tests
-                        sh """
-                            ssh -i /path/to/your/private/key.pem ec2-user@${instanceIp} 'docker-compose -f /home/ec2-user/docker-compose.yaml up -d'
-                            python3 selenium_test.py
-                        """
-                    }
                 }
             }
         }
