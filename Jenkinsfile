@@ -31,15 +31,13 @@ pipeline {
         }
 
         stage('Push to DockerHub') {
-            steps {
-                echo 'Testing..'
-                withCredentials([usernamePassword(credentialsId: 'docker_c', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                    sh """
-                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-                        
-                        docker tag prajipil/mydock:${env.BUILD_ID} prajipil/mydock:latest
-                        docker push prajipil/mydock:latest
-                    """
+    steps {
+        withCredentials([usernamePassword(credentialsId: 'docker_cred', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+            sh """
+                echo "\$DOCKER_PASS" | docker login -u "\$DOCKER_USER" --password-stdin
+                docker tag prajipil/mydock:${env.BUILD_ID} prajipil/mydock:latest
+                docker push prajipil/mydock:latest
+            """
                 }
             }
         }
