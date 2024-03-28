@@ -1,8 +1,7 @@
 pipeline {
     agent any
     environment {
-        DOCKERHUB_CREDENTIALS = credentials('docker_c')
-        EC2_CREDENTIALS = credentials('ec2_cred')
+        DOCKERHUB_CREDENTIALS = credentials('docker_cred')
     }
     stages {
         stage('Checkout') {
@@ -41,19 +40,7 @@ pipeline {
                         docker tag prajipil/mydock:${env.BUILD_ID} prajipil/mydock:latest
                         docker push prajipil/mydock:latest
                     """
-                }
-            }
-        }
-        stage('Deploy to EC2') {
-            steps {
-                sshagent(credentials: ['ec2_cred']) {
-                    sh """
-                        ssh -o StrictHostKeyChecking=no ubuntu@${env.EC2_IP} "
-                            docker pull prajipil/mydock:latest
-                            docker run -d -p 8000:8000 prajipil/mydock:latest
-                        "
-                    """
-                }
+               }                }
             }
         }
     }
