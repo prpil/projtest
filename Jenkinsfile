@@ -48,7 +48,7 @@ pipeline {
             steps {
                 sshagent(credentials: [EC2_CREDENTIALS]) {
                     sh """
-                        ssh -o StrictHostKeyChecking=no -i /home/ubuntu/passs.pem ubuntu@${env.EC2_IP} "
+                        ssh -o StrictHostKeyChecking=no -i /home/ubuntu/passs.pem ubuntu@18.222.115.84 "
                             docker pull prajipil/mydock:latest
                             docker run -d -p 8000:8000 prajipil/mydock:latest
                         "
