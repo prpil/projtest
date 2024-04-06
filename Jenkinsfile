@@ -52,7 +52,7 @@ pipeline {
                 }
                 sshagent(credentials: [EC2_CREDENTIALS]) {
                     sh """
-                        ssh -o StrictHostKeyChecking=no -i "jk.pem" ubuntu@18.222.115.84 "
+                        ssh -o StrictHostKeyChecking=no -i "passs.pem" ubuntu@18.222.115.84 "
                             docker pull prajipil/mydock:latest
                             docker run -d -p 8000:8000 prajipil/mydock:latest
                         "
