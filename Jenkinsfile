@@ -42,5 +42,17 @@ pipeline {
                 }
             }
         }
+stage('Deploy to EC2') {
+            steps {
+                sshagent(credentials: ['ec2_id']) {
+                    sh """
+                        ssh -o StrictHostKeyChecking=no ubuntu@${env.EC2_IP} "
+                            docker pull prajipil/mydock:latest
+                            docker run -d -p 8000:8000 prajipil/mydock:latest
+                        "
+                    """
+                }
+            }
+        }
     }
 }
